@@ -49,7 +49,7 @@ export const getLastTags = async (req, res) => {
 export const getTag = async (req, res) => {
   try {
     const tag = req.params.tag;
-
+    
     const posts = await PostModel.find({ tags: tag }).populate("user");
 
     res.status(200).json(posts);
@@ -240,6 +240,31 @@ export const addComment = async (req, res) => {
     console.log(err);
     res.status(500).json({
       message: "Не удалось добавить комментарий.",
+    });
+  }
+};
+
+export const likeClick = async (req, res) => {
+  console.log('postId')
+  try {
+    const postId = req.params.id;
+    
+    await PostModel.updateOne(
+      {
+        _id: postId,
+      },
+      {
+        $inc: { likes: 1 },
+      }
+    );
+
+    res.json({
+      success: true,
+    })
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Не удалось поставить лайк.",
     });
   }
 };
