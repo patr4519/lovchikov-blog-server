@@ -24,8 +24,14 @@ const PostSchema = new mongoose.Schema(
       default: [],
     },
     likes: {
-      type: Number,
-      default: 0,
+      count: {
+        type: Number,
+        default: 0,
+      },
+      users: {
+        type: Array,
+        default: [],
+      },
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,

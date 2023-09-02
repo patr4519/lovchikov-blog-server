@@ -49,7 +49,7 @@ export const getLastTags = async (req, res) => {
 export const getTag = async (req, res) => {
   try {
     const tag = req.params.tag;
-    
+
     const posts = await PostModel.find({ tags: tag }).populate("user");
 
     res.status(200).json(posts);
@@ -247,19 +247,28 @@ export const addComment = async (req, res) => {
 export const likeClick = async (req, res) => {
   try {
     const postId = req.params.id;
-    
-    await PostModel.updateOne(
+    const userId = req.body.userId;
+
+    const updatedPost = await PostModel.updateOne(
       {
         _id: postId,
       },
       {
-        $inc: { likes: 1 },
-      }
+        $inc: { "likes.count": 1 },
+        $addToSet: { "likes.users": userId },
+      },
+      { new: true }
     );
+
+    if (!updatedPost) {
+      return res.status(404).json({
+        message: "Пост не найден",
+      });
+    }
 
     res.json({
       success: true,
-    })
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({
