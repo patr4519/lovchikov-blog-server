@@ -245,7 +245,6 @@ export const addComment = async (req, res) => {
 };
 
 export const likeClick = async (req, res) => {
-  console.log('postId')
   try {
     const postId = req.params.id;
     

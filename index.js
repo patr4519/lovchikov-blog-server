@@ -91,7 +91,7 @@ app.patch("/posts/:id/:date", checkAuth, PostController.deleteComment);
 
 app.patch("/add-comment/:id", checkAuth, PostController.addComment);
 
-app.patch("/likeClick/:id", PostController.likeClick);
+app.patch("/likeClick/:id", checkAuth, PostController.likeClick);
 
 app.listen(PORT, (err) => {
   if (err) {
