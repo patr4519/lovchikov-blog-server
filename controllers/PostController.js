@@ -249,30 +249,42 @@ export const likeClick = async (req, res) => {
     const postId = req.params.id;
     const userId = req.body.userId;
 
-    const updatedPost = await PostModel.updateOne(
-      {
-        _id: postId,
-      },
-      {
-        $inc: { "likes.count": 1 },
-        $addToSet: { "likes.users": userId },
-      },
-      { new: true }
-    );
+    const post = await PostModel.findById(postId);
 
-    if (!updatedPost) {
+    if (!post) {
       return res.status(404).json({
         message: "Пост не найден",
       });
+    }
+
+    const isLiked = post.likes.users.includes(userId);
+
+    if (isLiked) {
+      await PostModel.updateOne(
+        { _id: postId },
+        {
+          $inc: { "likes.count": -1 },
+          $pull: { "likes.users": userId },
+        }
+      );
+    } else {
+      await PostModel.updateOne(
+        { _id: postId },
+        {
+          $inc: { "likes.count": 1 },
+          $addToSet: { "likes.users": userId },
+        }
+      );
     }
 
     res.json({
       success: true,
     });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.status(500).json({
-      message: "Не удалось поставить лайк.",
+      message: "Не удалось обновить лайк.",
     });
   }
 };
+
