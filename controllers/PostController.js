@@ -15,6 +15,11 @@ export const getPosts = async (req, res) => {
         .populate("user")
         .sort({ createdAt: -1 })
         .exec();
+    } else if (category === "rated") {
+      posts = await PostModel.find()
+        .populate("user")
+        .sort({ "likes.count": -1 })
+        .exec();
     } else {
       return res.status(400).json({ error: "Invalid category" });
     }
@@ -287,4 +292,3 @@ export const likeClick = async (req, res) => {
     });
   }
 };
-
